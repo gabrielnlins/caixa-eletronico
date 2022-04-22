@@ -230,7 +230,7 @@ function removeAmount(accountName, amount) {
 function exit() {
     process.exit()
 }
-
+ 
 function parseToNumber(amount) {
     return parseInt(amount)
 }

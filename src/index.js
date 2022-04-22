@@ -20,5 +20,4 @@ DESENVOLVER TESTES
 
 pesquisar shutdown hook ou graceful shutdown
 */
-
 customerOperations()

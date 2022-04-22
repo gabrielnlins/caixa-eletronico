@@ -13,7 +13,6 @@ test('should try to create an account for a user that just exists and receive an
 
 })
 
-
 test('should verify if account exists and then add value to user account balance', () => {
     const accountName = 'gabriel'
     const amount = 1000
