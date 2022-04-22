@@ -68,7 +68,7 @@ function buildAccount() {
         name: 'accountName',
         message: 'Digite um nome para a sua conta:'
     }]).then((answer) => {
-        const accountName = answer['accountName']
+        const accountName = answer['accountName'].toLowerCase()
 
         createAccount(accountName)
         return customerOperations();
@@ -90,7 +90,7 @@ function answersAndDeposit() {
     }
     ])
         .then(answer => {
-            const accountName = answer['accountName']
+            const accountName = answer['accountName'].toLowerCase()
             inquirer.prompt([{
                 name: 'amount',
                 message: 'Quanto você deseja depositar?'
@@ -158,7 +158,7 @@ function getAccountBalance() {
         name: 'accountName',
         message: 'Qual o nome da sua conta?'
     }]).then(answer => {
-        const accountName = answer['accountName']
+        const accountName = answer['accountName'].toLowerCase()
         accountBalance(accountName);
 
         return customerOperations()
@@ -176,7 +176,7 @@ function withdraw() {
         name: 'accountName',
         message: 'Qual o nome da sua conta?'
     }]).then(answer => {
-        const accountName = answer['accountName']
+        const accountName = answer['accountName'].toLowerCase()
 
         inquirer.prompt([{
             name: 'amount',
@@ -195,6 +195,8 @@ function withdrawAndReturnToMenu(accountName, amount) {
 }
 
 function removeAmount(accountName, amount) {
+//TODO
+//se houver tempo, criar método que permite remover valores apenas múltiplos de 10
     const newAmount = parseFloat(amount)
     if (!typeof newAmount === Number || !newAmount) {
         console.log(chalk.bgRed.black('Valor inválido.'))

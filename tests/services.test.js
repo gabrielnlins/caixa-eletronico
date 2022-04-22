@@ -15,7 +15,7 @@ test('should try to create an account for a user that just exists and receive an
 
 test('should verify if account exists and then add value to user account balance', () => {
     const accountName = 'Gabriel'
-    const amount = 1000
+    const amount = 100000
     const accountData = getAccount(accountName)
 
     expect(deposit(accountName, amount)).toBe(accountData.balance + amount)
@@ -24,7 +24,7 @@ test('should verify if account exists and then add value to user account balance
 
 test('should throw an error that means the system not found the user account to deposit', () => {
     const accountName = 'João Fulano da Silva'
-    const amount = 1000
+    const amount = 100000
     expect(deposit(accountName, amount)).toBe(404)
 })
 
@@ -40,7 +40,7 @@ test('should throw an error because the name passed in does not exists', () => {
 
 test('should do withdraw and remove the amount value passed', () => {
     const accountName = 'Gabriel'
-    const amount = 200
+    const amount = 80
     expect(removeAmount(accountName, amount)).toBe(200)
 })
 
