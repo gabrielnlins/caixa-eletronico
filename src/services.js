@@ -10,8 +10,6 @@ function customerOperations() {
         choices: [
             'Criar conta',
             'Consultar saldo',
-            'Adicionar notas',
-            'Notas disponiveis',
             'Depositar',
             'Sacar',
             'Sair'
@@ -23,12 +21,6 @@ function customerOperations() {
             case 'Criar conta':
                 buildAccount()
                 break;
-            case 'Adicionar notas':
-                createNotes()
-                break;
-            case 'Notas disponiveis':
-                getAvailableNotes()
-                break;
             case 'Consultar saldo':
                 getAccountBalance()
                 break;
@@ -39,7 +31,6 @@ function customerOperations() {
                 withdraw()
                 break;
             case 'Sair':
-                // console.log(chalk.bgBlue.black(`Obrigado por utilizar nosso banco, ${accountName.charAt(0) + accountName.slice(1)}!`))
                 exit()
             default:
                 console.log(`Desculpe, mas nenhuma ação escolhida. \nEncerrando...`)
@@ -53,10 +44,7 @@ function createAccount(accountName) {
     if (!fs.existsSync('accounts')) {
         fs.mkdirSync('accounts')
     } else if (fs.existsSync(`accounts/${accountName}.json`)) {
-        console.log(
-            chalk.bgRed.black('Esta conta já existe, escolha outro nome!')
-
-        )
+        
         buildAccount()
         throw new Error('Esta conta já existe, escolha outro nome!')
     }
@@ -118,7 +106,7 @@ function checkAccount(accountName) {
     return true
 }
 
-//criar função de depósito
+//criar função para fazer o cálculo do depósito
 function addAmount(accountName, amount) {
     const newAmount = parseFloat(amount);
     //criar tratamento para inserts de strings, números negativos ou símbolos
@@ -198,7 +186,7 @@ function withdraw() {
         })
     }).catch(e => console.log(e))
 }
-//criar função que busca o usuário e remove o balance passado na opção saque
+//criar função que busca o usuário e subtrai o balance passado na opção saque
 function withdrawAndReturnToMenu(accountName, amount) {
     removeAmount(accountName, amount)
     return customerOperations()
@@ -245,15 +233,6 @@ function util(accountData, accountName) {
     }
 }
 
-// criar quantidade XPTO de notas de 100, 50, 20 e 10 ex: notas disponíveis
-function createNotes() {
-    if (!fs.existsSync('notes')) {
-
-        fs.mkdirSync('notes')
-    }
-    fs.writeFileSync(`notes/notes.json`, `{"note100": 10, "note50": 10, "note20": 10, "note10": 10}`)
-    console.log("As notas disponíveis são: " + `R$ 100,00; R$ 50,00; R$ 20,00 e R$ 10,00`)
-}
 // criar função que irá calcular as notas a serem utilizadas
 const noteValues = [100, 50, 20, 10];
 let newMessage = [];
@@ -287,8 +266,6 @@ const notes = (amount) => {
     }
     newMessage = [];
 }
-
-//se houver tempo, criar função para descontar notas conforme forem sendo sacadas
 
 module.exports = {
     createAccount,
