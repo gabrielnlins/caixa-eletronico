@@ -41,12 +41,19 @@ function customerOperations() {
 
 // criar método para chamar a criação de conta
 function createAccount(accountName) {
+    const lowerCaseName = accountName.toLowerCase()
     if (!fs.existsSync('accounts')) {
         fs.mkdirSync('accounts')
-    } else if (!checkIfValidAccount(accountName) || !accountName) {
+    } else if (!checkIfValidAccount(lowerCaseName) || !lowerCaseName) {
         return 409;
     } else {
-        fs.writeFileSync(`accounts/${accountName}.json`, '{"balance": 0}', function (e) {
+        //TODO
+        //ao executar os testes sem a pasta accounts já criada, o teste para contas já criadas acaba falhando
+        //pensar em uma solução para isso. Talvez utilizar async/await, mas irei refatorar se ainda sobrar tempo.
+        //quando o diretório accounts já estiver criado e vazio, ele consegue passar em todos os testes.
+        //quando o diretório accounts não existe, os dois testes para criar conta ou verificar conflito de nome passam com status 201
+        //e, portanto, o teste para validar conflitos acaba falhando 
+        fs.writeFileSync(`accounts/${lowerCaseName}.json`, '{"balance": 0}', function (e) {
             console.log(e)
         })
         console.log(chalk.bgGreen.black('Parabéns por escolher nosso banco!'))
@@ -54,6 +61,7 @@ function createAccount(accountName) {
 
     return 201;
 }
+
 function checkIfValidAccount(accountName) {
     if (fs.existsSync(`accounts/${accountName}.json`)) {
         console.log(chalk.bgRed.black('Nome indisponível, escolha outro!'))
@@ -77,10 +85,11 @@ function buildAccount() {
 
 // criar função para realizar depósitos
 function deposit(accountName, amount) {
-    if (!checkAccount(accountName)) {
+    const lowerCaseName = accountName.toLowerCase()
+    if (!checkAccount(lowerCaseName)) {
         return 404;
     }
-    return addAmount(accountName, amount)
+    return addAmount(lowerCaseName, amount)
 }
 
 function answersAndDeposit() {
@@ -129,12 +138,13 @@ function addAmount(accountName, amount) {
 
     fs.writeFileSync(`accounts/${accountName}.json`, JSON.stringify(accountData),
         e => console.log(e))
-    console.log(chalk.green(`Foi depositado o valor de R$${amount} na sua conta!`))
+    console.log(chalk.bgGreen.black(`Foi depositado o valor de R$${amount} na sua conta!`))
     return accountData.balance;
 }
 //criar função para fazer busca de contas disponíveis
 function getAccount(accountName) {
-    const account = fs.readFileSync(`accounts/${accountName}.json`, {
+    const lowerCaseName = accountName.toLowerCase()
+    const account = fs.readFileSync(`accounts/${lowerCaseName}.json`, {
         encoding: 'utf8',
         flag: 'r'
     })
@@ -143,11 +153,12 @@ function getAccount(accountName) {
 
 //criar função para consultar o saldo
 function accountBalance(accountName) {
-    if (!checkAccount(accountName)) {
+    const lowerCaseName = accountName.toLowerCase()
+    if (!checkAccount(lowerCaseName)) {
         return 404;
     }
-    const accountData = getAccount(accountName)
-    util(accountData, accountName)
+    const accountData = getAccount(lowerCaseName)
+    util(accountData, lowerCaseName)
 
     console.log(chalk.bgBlue.black(`Olá ${accountName.charAt(0).toUpperCase() + accountName.slice(1)}, o saldo da sua conta é de R$${accountData.balance}`))
     return 200;
@@ -190,7 +201,8 @@ function withdraw() {
 }
 //criar função que busca o usuário e subtrai o balance passado na opção saque
 function withdrawAndReturnToMenu(accountName, amount) {
-    removeAmount(accountName, amount)
+    const lowerCaseName = accountName.toLowerCase()
+    removeAmount(lowerCaseName, amount)
     return customerOperations()
 }
 
@@ -210,7 +222,7 @@ function removeAmount(accountName, amount) {
     const parseStringToNumber = parseToNumber(amount)
     const operation = parseInt(accountData.balance) - parseInt(parseStringToNumber)
     if (operation < 0) {
-        console.log(`Valor indisponível para saque. Total em conta: R$${accountData.balance}.`)
+        console.log(chalk.bgBlue.black(`Valor indisponível para saque. Total em conta: R$${accountData.balance}.`))
         fs.writeFileSync(`accounts/${accountName}.json`, `{"balance": ${accountData.balance}}`,
             e => console.log(e))
         return customerOperations()
@@ -254,20 +266,20 @@ const notes = (amount) => {
 
     if (newMessage.length === 1) {
 
-        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join()}.`));
+        console.log(chalk.bgGreen.black(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join()}.`));
 
     } else if (newMessage.length <= 2) {
 
-        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join(" e ")}.`));
+        console.log(chalk.bgGreen.black(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join(" e ")}.`));
 
     } else if (newMessage.length === 3) {
 
         const splicedMessage = newMessage.splice(0, 2)
-        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${splicedMessage.join(", ")} e ${newMessage}.`));
+        console.log(chalk.bgGreen.black(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${splicedMessage.join(", ")} e ${newMessage}.`));
 
     } else if (newMessage.length === 4) {
         const splicedMessage = newMessage.splice(0, 3)
-        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${splicedMessage.join(", ")} e ${newMessage}.`));
+        console.log(chalk.bgGreen.black(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${splicedMessage.join(", ")} e ${newMessage}.`));
 
     }
     newMessage = [];
