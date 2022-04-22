@@ -45,7 +45,7 @@ test('should do withdraw and remove the amount value passed', () => {
     expect(removeAmount(accountName, amount)).toBe(200)
 })
 
-test('should do withdraw and remove the amount value passed', () => {
+test('should send error message because of invalid amount', () => {
     const accountName = 'gabriel'
     const amount = 'abc'
     expect(removeAmount(accountName, amount)).toBe(400)
