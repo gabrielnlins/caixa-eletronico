@@ -1,4 +1,4 @@
-# teste-backend - Caixa eletrônico
+# Teste-backend - Caixa eletrônico
 Teste para vaga NodeJS
 
 # Como a solução foi desenvolvida
