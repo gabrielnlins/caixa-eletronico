@@ -43,17 +43,23 @@ function customerOperations() {
 function createAccount(accountName) {
     if (!fs.existsSync('accounts')) {
         fs.mkdirSync('accounts')
-    } else if (fs.existsSync(`accounts/${accountName}.json`)) {
-        
-        buildAccount()
-        throw new Error('Esta conta já existe, escolha outro nome!')
+    } else if (!checkIfValidAccount(accountName) || !accountName) {
+        return 409;
+    } else {
+        fs.writeFileSync(`accounts/${accountName}.json`, '{"balance": 0}', function (e) {
+            console.log(e)
+        })
+        console.log(chalk.bgGreen.black('Parabéns por escolher nosso banco!'))
     }
 
-    fs.writeFileSync(`accounts/${accountName}.json`, '{"balance": 0}', function (e) {
-        console.log(e)
-    })
-    console.log(chalk.bgGreen.black('Parabéns por escolher nosso banco!'))
     return 201;
+}
+function checkIfValidAccount(accountName) {
+    if (fs.existsSync(`accounts/${accountName}.json`)) {
+        console.log(chalk.bgRed.black('Nome indisponível, escolha outro!'))
+        return false
+    }
+    return true
 }
 
 //criar função para abrir uma conta
@@ -72,7 +78,7 @@ function buildAccount() {
 // criar função para realizar depósitos
 function deposit(accountName, amount) {
     if (!checkAccount(accountName)) {
-        throw new Error('Conta não encontrada.')
+        return 404;
     }
     return addAmount(accountName, amount)
 }
@@ -112,10 +118,10 @@ function addAmount(accountName, amount) {
     //criar tratamento para inserts de strings, números negativos ou símbolos
     if (!newAmount || !typeof newAmount === Number) {
         console.log(chalk.bgRed.black('Ocorreu um erro, tente novamente mais tarde.'))
-        throw new Error('not found');
+        return 400;
     } else if (newAmount <= 0) {
         console.log(chalk.bgRed.black("Informe um valor válido."))
-        throw new Error('not found');
+        return 400;
     }
     const accountData = getAccount(accountName)
     util(accountData, accountName)
@@ -123,26 +129,22 @@ function addAmount(accountName, amount) {
 
     fs.writeFileSync(`accounts/${accountName}.json`, JSON.stringify(accountData),
         e => console.log(e))
-    console.log(`Foi depositado o valor de R$${amount} na sua conta!`)
+    console.log(chalk.green(`Foi depositado o valor de R$${amount} na sua conta!`))
     return accountData.balance;
 }
 //criar função para fazer busca de contas disponíveis
 function getAccount(accountName) {
-    try {
-        const account = fs.readFileSync(`accounts/${accountName}.json`, {
-            encoding: 'utf8',
-            flag: 'r'
-        })
-        return JSON.parse(account)
-    } catch (e) {
-        throw new Error('not found')
-    }
+    const account = fs.readFileSync(`accounts/${accountName}.json`, {
+        encoding: 'utf8',
+        flag: 'r'
+    })
+    return JSON.parse(account)
 }
 
 //criar função para consultar o saldo
 function accountBalance(accountName) {
     if (!checkAccount(accountName)) {
-        throw new Error('Conta não encontrada.')
+        return 404;
     }
     const accountData = getAccount(accountName)
     util(accountData, accountName)
@@ -157,9 +159,9 @@ function getAccountBalance() {
         message: 'Qual o nome da sua conta?'
     }]).then(answer => {
         const accountName = answer['accountName']
+        accountBalance(accountName);
 
-        customerOperations()
-        return accountBalance(accountName);
+        return customerOperations()
     }).catch(e => console.log(e))
 }
 //criar função para saque
@@ -195,9 +197,11 @@ function withdrawAndReturnToMenu(accountName, amount) {
 function removeAmount(accountName, amount) {
     const newAmount = parseFloat(amount)
     if (!typeof newAmount === Number || !newAmount) {
-        throw new Error('Amount is not a valid number.')
+        console.log(chalk.bgRed.black('Valor inválido.'))
+        return 400;
     } else if (newAmount <= 0) {
-        throw new Error('Amount is not a valid number.')
+        console.log(chalk.bgRed.black('Valor inválido.'))
+        return 400;
     }
     const accountData = getAccount(accountName)
     util(accountData, accountName)
@@ -218,7 +222,7 @@ function removeAmount(accountName, amount) {
 function exit() {
     process.exit()
 }
- 
+
 function parseToNumber(amount) {
     return parseInt(amount)
 }
@@ -248,20 +252,20 @@ const notes = (amount) => {
 
     if (newMessage.length === 1) {
 
-        console.log(`Valor do Saque: R$ ${initialAmount},00 - Entregando ao cliente: ${newMessage.join()}.`);
+        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join()}.`));
 
     } else if (newMessage.length <= 2) {
 
-        console.log(`Valor do Saque: R$ ${initialAmount},00 - Entregando ao cliente: ${newMessage.join(" e ")}.`);
+        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join(" e ")}.`));
 
     } else if (newMessage.length === 3) {
 
         const splicedMessage = newMessage.splice(0, 2)
-        console.log(`Valor do Saque: R$ ${initialAmount},00 - Entregando ao cliente: ${splicedMessage.join(", ")} e ${newMessage}.`);
+        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${splicedMessage.join(", ")} e ${newMessage}.`));
 
     } else if (newMessage.length === 4) {
         const splicedMessage = newMessage.splice(0, 3)
-        console.log(`Valor do Saque: R$ ${initialAmount},00 - Entregando ao cliente: ${splicedMessage.join(", ")} e ${newMessage}.`);
+        console.log(chalk.green(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${splicedMessage.join(", ")} e ${newMessage}.`));
 
     }
     newMessage = [];
