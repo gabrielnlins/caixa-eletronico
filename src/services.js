@@ -259,7 +259,12 @@ const notes = (amount) => {
     for (let i = 0; i < noteValues.length; i++) {
         if (amount >= noteValues[i]) {
             const result = parseInt(amount / noteValues[i])
-            newMessage.push(`${result} nota(s) de R$${noteValues[i]},00`)
+            if(result > 1) {
+                newMessage.push(`${result} notas de R$${noteValues[i]},00`)    
+            } else {
+                newMessage.push(`${result} nota de R$${noteValues[i]},00`)
+            }
+            
             amount = amount % noteValues[i];
         }
     }
@@ -268,7 +273,7 @@ const notes = (amount) => {
 
         console.log(chalk.bgGreen.black(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join()}.`));
 
-    } else if (newMessage.length <= 2) {
+    } else if (newMessage.length === 2) {
 
         console.log(chalk.bgGreen.black(`Valor do Saque: R$ ${initialAmount},00 - Entregar: ${newMessage.join(" e ")}.`));
 
