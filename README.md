@@ -1,5 +1,5 @@
-# Teste-backend - Caixa eletrônico
-Teste para vaga NodeJS
+# Caixa eletrônico
+Exercício NodeJS
 
 # Como a solução foi desenvolvida
   Decidi utilizar a biblioteca Inquirer para simular um bot e disponibilizar as funcionalidades aos usuários de modo que consigam selecioná-las teclando 
