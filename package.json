@@ -1,7 +1,7 @@
 {
-  "name": "teste-backend-nodejs",
+  "name": "backend-nodejs",
   "version": "1.0.0",
-  "description": "Teste backend",
+  "description": "Backend",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
